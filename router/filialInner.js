@@ -71,6 +71,9 @@ router.put('/:id', validId, async (req, res) => {
         const filialInner = await FilialInner.findByIdAndUpdate(req.params.id, {
             images
         }, {new: true})
+        if (!filialInner) {
+            return res.status(404).send('Berilgan ID bo\'yicha malumot topilmadi')
+        }
         res.status(201).send(filialInner)
 
     } catch (error) {

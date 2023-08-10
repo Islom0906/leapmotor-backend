@@ -53,6 +53,7 @@ router.put('/:id', [auth,validId], async (req, res) => {
         if (!map){
             return res.status(404).send('Berilgan ID bo\'yicha malumot topilmadi')
         }
+
         res.send(map)
     }catch (error){
         res.send(error.message)

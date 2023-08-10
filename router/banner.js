@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const {Product, validate} = require('../model/productSchema')
+const {Banner, validate} = require('../model/bannerSchema')
 const {Media} = require('../model/mediaSchema')
 const validId = require('../middleware/validId')
 const isValidIdBody = require("../utils/isValidIdBody");
@@ -8,9 +8,9 @@ const deleteMedias = require("../utils/deleteMedias");
 
 // GET
 router.get('/', async (req, res) => {
-    const product = await Product.find().sort({updatedAt:1})
+    const banner = await Banner.find()
 
-    res.send(product)
+    res.send(banner[0])
 })
 
 
@@ -21,26 +21,25 @@ router.post('/', async (req, res) => {
     if (error) {
         return res.status(400).send(error.details[0].message)
     }
-    const ValidId = isValidIdBody([req.body.mediaLogoId,req.body.mediaBannerId])
+    const ValidId = isValidIdBody([req.body.mediaLogoId,req.body.mediaBrandId,req.body.mediaVideoId])
     if (!ValidId) {
         return res.status(400).send('Mavjud bo\'lmagan id')
     }
     const imageLogo= await Media.findById(req.body.mediaLogoId)
-    const imageBanner= await Media.findById(req.body.mediaBannerId)
+    const imageBrand= await Media.findById(req.body.mediaBrandId)
+    const videoBanner= await Media.findById(req.body.mediaVideoId)
 
-    if (!imageLogo || !imageBanner){
+    if (!imageLogo || !imageBrand ||!videoBanner){
         return res.status(404).send('Berilgan ID bo\'yicha malumot topilmadi')
     }
 
     try {
-        const product = await Product.create({
+        const banner = await Banner.create({
             imageLogo,
-            textRu:req.body.textRu,
-            textUz:req.body.textUz,
-            model:req.body.model,
-            imageBanner
+            imageBrand,
+            videoBanner
         })
-        res.status(201).send(product)
+        res.status(201).send(banner)
 
     } catch (error) {
         res.send(error.message)
@@ -56,28 +55,30 @@ router.put('/:id', validId, async (req, res) => {
     if (error) {
         return res.status(400).send(error.details[0].message)
     }
-    const ValidId = isValidIdBody([req.body.mediaLogoId,req.body.mediaBannerId])
+
+    const ValidId = isValidIdBody([req.body.mediaLogoId,req.body.mediaBrandId,req.body.mediaVideoId])
     if (!ValidId) {
         return res.status(400).send('Mavjud bo\'lmagan id')
     }
     const imageLogo= await Media.findById(req.body.mediaLogoId)
-    const imageBanner= await Media.findById(req.body.mediaBannerId)
+    const imageBrand= await Media.findById(req.body.mediaBrandId)
+    const videoBanner= await Media.findById(req.body.mediaVideoId)
 
-    if (!imageLogo || !imageBanner){
+
+    if (!imageLogo || !imageBrand ||!videoBanner){
         return res.status(404).send('Berilgan ID bo\'yicha malumot topilmadi')
     }
     try {
-        const product = await Product.findByIdAndUpdate(req.params.id, {
+        const banner = await Banner.findByIdAndUpdate(req.params.id, {
             imageLogo,
-            textRu:req.body.textRu,
-            textUz:req.body.textUz,
-            model:req.body.model,
-            imageBanner
+            imageBrand,
+            videoBanner
         }, {new: true})
-        if (!product) {
+
+        if (!banner) {
             return res.status(404).send('Berilgan ID bo\'yicha malumot topilmadi')
         }
-        res.status(201).send(product)
+        res.status(201).send(banner)
 
     } catch (error) {
         res.send(error.message)
@@ -90,14 +91,14 @@ router.put('/:id', validId, async (req, res) => {
 router.delete('/:id', validId, async (req, res) => {
 
 
-    const product = await Product.findByIdAndRemove(req.params.id)
+    const banner = await Banner.findByIdAndRemove(req.params.id)
 
-    if (!product) {
+    if (!banner) {
         return res.status(404).send('Berilgan ID bo\'yicha malumot topilmadi')
     }
-    const imagesId = [product.imageLogo._id,product.imageBanner._id]
+    const imagesId = [banner.imageLogo._id,banner.imageBrand._id,banner.videoBanner._id]
 
-
+    console.log(banner)
     try {
 
         await Media.deleteMany({_id: {$in: imagesId}})
@@ -107,8 +108,8 @@ router.delete('/:id', validId, async (req, res) => {
             .catch((error) => {
                 res.send(error.message)
             });
-        await deleteMedias([product.imageLogo,product.imageBanner])
-        res.send(product)
+        await deleteMedias([banner.imageLogo,banner.imageBrand,banner.videoBanner])
+        res.send(banner)
     } catch (error) {
         res.send(error.message)
     }

@@ -67,6 +67,9 @@ router.put('/:id', validId, async (req, res) => {
             image
 
         },{new:true})
+        if (!filial) {
+            return res.status(404).send('Berilgan ID bo\'yicha malumot topilmadi')
+        }
         res.status(201).send(filial)
 
     } catch (error) {
