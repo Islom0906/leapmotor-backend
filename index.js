@@ -21,8 +21,7 @@ const authRouter=require('./router/auth')
 //     console.error('JIDDIY XATO: leapmotors_jwtPrivateKey muhit o\'zgaruvchisi aniqlanmadi')
 //     process.exit(1)
 // }
-
-mongoose.connect('mongodb://localhost/leapmotor')
+mongoose.connect('mongodb+srv://iabdugofurov99:ZSC5E90lah3sB2mB@cluster0.xwz5w7b.mongodb.net/')
     .then(()=>{
         console.log('MongoDbga ulanish hosil qilindi')
     })
