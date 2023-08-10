@@ -84,7 +84,7 @@ router.post('/', async (req, res) => {
         .catch((err) => {
             res.send('Imagelarni topishda xatolikka yo\'l qoyildi', err.message)
         });
-    const team = teamArr.map((item, ind) => {
+    const team = teamArr.map((item) => {
         for (let i = 0; i < teamImage.length; i++) {
             if (item.image === teamImage[i]._id.toString()) {
                 item.image = teamImage[i]
@@ -94,7 +94,7 @@ router.post('/', async (req, res) => {
         return item
     })
 
-    const systems = systemArr.map((item, ind) => {
+    const systems = systemArr.map((item) => {
         for (let i = 0; i < systemsImage.length; i++) {
             if (item.image === systemsImage[i]._id.toString()) {
                 item.image = systemsImage[i]
@@ -209,7 +209,7 @@ router.put('/:id', validId, async (req, res) => {
             res.send('Imagelarni topishda xatolikka yo\'l qoyildi', err.message)
         });
 
-    const team = teamArr.map((item, ind) => {
+    const team = teamArr.map((item) => {
         for (let i = 0; i < teamImage.length; i++) {
             if (item.image === teamImage[i]._id.toString()) {
                 item.image = teamImage[i]
@@ -219,7 +219,7 @@ router.put('/:id', validId, async (req, res) => {
         return item
     })
 
-    const systems = systemArr.map((item, ind) => {
+    const systems = systemArr.map((item) => {
         for (let i = 0; i < systemsImage.length; i++) {
             if (item.image === systemsImage[i]._id.toString()) {
                 item.image = systemsImage[i]

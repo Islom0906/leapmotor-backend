@@ -3,7 +3,6 @@ const router = express.Router()
 const {FilialInner, validate} = require('../model/filialInnerSchema')
 const {Media} = require('../model/mediaSchema')
 const validId = require('../middleware/validId')
-const Joi = require("joi");
 const isValidIdBody = require("../utils/isValidIdBody");
 const deleteMedias = require("../utils/deleteMedias");
 
