@@ -5,6 +5,7 @@ const {Media} = require('../model/mediaSchema')
 const validId = require('../middleware/validId')
 const isValidIdBody = require("../utils/isValidIdBody");
 const deleteMedias = require("../utils/deleteMedias");
+const auth=require('../middleware/auth')
 
 // GET
 router.get('/', async (req, res) => {
@@ -15,7 +16,7 @@ router.get('/', async (req, res) => {
 
 
 // POST
-router.post('/', async (req, res) => {
+router.post('/',auth, async (req, res) => {
     let images = []
     const {error} = validate(req.body)
 
@@ -48,7 +49,7 @@ router.post('/', async (req, res) => {
 
 //PUT
 
-router.put('/:id', validId, async (req, res) => {
+router.put('/:id', [auth,validId], async (req, res) => {
     let images = []
     const {error} = validate(req.body)
 
@@ -83,7 +84,7 @@ router.put('/:id', validId, async (req, res) => {
 
 //DELETE
 
-router.delete('/:id', validId, async (req, res) => {
+router.delete('/:id', [auth,validId], async (req, res) => {
     let imagesId = []
 
     const filialInner = await FilialInner.findByIdAndRemove(req.params.id)

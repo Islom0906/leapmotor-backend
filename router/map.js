@@ -11,7 +11,7 @@ router.get('/', async (req, res) => {
     res.send(map)
 })
 // GET ID
-router.get('/:id', validId, async (req, res) => {
+router.get('/:id', [auth,validId], async (req, res) => {
     const map = await Map.findById(req.params.id)
 
     if (!map) {

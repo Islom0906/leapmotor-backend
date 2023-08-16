@@ -6,6 +6,8 @@ const {v4:uuidv4}=require('uuid')
 const path=require('path')
 const fs=require('fs')
 const deleteMedias=require('../utils/deleteMedias')
+const auth=require('../middleware/auth')
+
 
 const storage=multer.diskStorage({
     destination:(req,file,cb)=>{
@@ -35,7 +37,7 @@ router.get('/',async (req,res)=>{
 })
 
 // POST
-router.post('/',upload.array('media',10),async (req,res)=>{
+router.post('/',[auth,upload.array('media',10)],async (req,res)=>{
     if (!req.files || req.files.length===0){
         return res.status(400).send('Iltimos rasm yuklang')
     }
@@ -54,7 +56,7 @@ router.post('/',upload.array('media',10),async (req,res)=>{
 
 })
 
-router.delete('/',async (req,res)=>{
+router.delete('/',auth,async (req,res)=>{
     let medias=[]
     await Media.find({_id: {$in: req.body.ids}})
         .then((documents) => {

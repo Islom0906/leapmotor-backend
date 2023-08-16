@@ -7,6 +7,8 @@ const isValidIdBody=require('../utils/isValidIdBody')
 const deleteMedias=require('../utils/deleteMedias')
 const krillToLotin=require('../utils/krillToLotin')
 const slugify = require("slugify");
+const auth=require('../middleware/auth')
+
 // GET
 router.get('/', async (req, res) => {
     const news = await News.find().sort({updatedAt:1})
@@ -14,7 +16,7 @@ router.get('/', async (req, res) => {
     res.send(news)
 })
 // GET ID
-router.get('/:slug', async (req, res) => {
+router.get('/:slug',auth, async (req, res) => {
     const news = await News.findOne({slug:req.params.slug})
 
     if (!news) {
@@ -25,7 +27,7 @@ router.get('/:slug', async (req, res) => {
 })
 
 // POST
-router.post('/', async (req, res) => {
+router.post('/',auth, async (req, res) => {
     const {error} = validate(req.body)
     if (error) {
         return res.status(400).send(error.details[0].message)
@@ -85,7 +87,7 @@ router.post('/', async (req, res) => {
 })
 
 //PUT
-router.put('/:id', validId, async (req, res) => {
+router.put('/:id',[auth,validId], async (req, res) => {
     const {error} = validate(req.body)
 
     if (error) {
@@ -148,7 +150,7 @@ router.put('/:id', validId, async (req, res) => {
 })
 
 //DELETE
-router.delete('/:id', validId, async (req, res) => {
+router.delete('/:id', [auth,validId], async (req, res) => {
     const news = await News.findByIdAndRemove(req.params.id)
 
     if (!news) {
