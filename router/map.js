@@ -8,7 +8,6 @@ const admin=require('../middleware/admin')
 // GET
 router.get('/', async (req, res) => {
     const map = await Map.find()
-
     res.send(map)
 })
 // GET ID
@@ -63,7 +62,7 @@ router.put('/:id', [auth,validId], async (req, res) => {
 
 //DELETE
 
-router.delete('/:id', [auth,admin,validId], async (req, res) => {
+router.delete('/:id', [auth,validId], async (req, res) => {
     const map = await Map.findByIdAndRemove(req.params.id)
 
     if (!map) {

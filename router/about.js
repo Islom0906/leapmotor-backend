@@ -21,14 +21,12 @@ router.post('/', async (req, res) => {
     if (error) {
         return res.status(400).send(error.details[0].message)
     }
-
     const aboutCompanyImageId=[]
     const aboutSystemsImageId=[]
     let teamImage=[]
     let systemsImage=[]
     let teamArr=[]
     let systemArr=[]
-
 
     req.body.aboutCompany.team.forEach(item=>{
         aboutCompanyImageId.push(item.mediaId)
