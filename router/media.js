@@ -13,7 +13,7 @@ const storage=multer.diskStorage({
     destination:(req,file,cb)=>{
         cb(null,'media/')
     },filename:(req,file,cb)=>{
-        cb(null,uuidv4()+path.extname(file.originalname))
+        cb(null,uuidv4()+'-'+file.originalname)
     }
 })
 
