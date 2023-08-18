@@ -17,7 +17,7 @@ const error = require("../middleware/error");
 module.exports=(app)=>{
     const imagesFolderPath=path.join(__dirname,'..')
 
-    app.use(express.static(imagesFolderPath))
+    app.use('/api/',express.static(imagesFolderPath))
     app.use(express.json())
     app.use('/api/medias',imageRouter)
     app.use('/api/map',mapRouter)
