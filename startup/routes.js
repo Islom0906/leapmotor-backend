@@ -1,5 +1,6 @@
 const path = require("path");
 const express = require("express");
+const cors=require('cors')
 const imageRouter = require("../router/media");
 const mapRouter = require("../router/map");
 const contactRouter = require("../router/contact");
@@ -17,6 +18,7 @@ const error = require("../middleware/error");
 module.exports=(app)=>{
     const imagesFolderPath=path.join(__dirname,'..')
 
+    app.use(cors())
     app.use('/api/',express.static(imagesFolderPath))
     app.use(express.json())
     app.use('/api/medias',imageRouter)
