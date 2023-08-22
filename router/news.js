@@ -16,7 +16,7 @@ router.get('/', async (req, res) => {
     res.send(news)
 })
 // GET ID
-router.get('/:slug',auth, async (req, res) => {
+router.get('/:slug', async (req, res) => {
     const news = await News.findOne({slug:req.params.slug})
 
     if (!news) {
