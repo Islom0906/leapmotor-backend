@@ -10,6 +10,9 @@ const filialInnerRouter = require("../router/filialInner");
 const productRouter = require("../router/product");
 const bannerRouter = require("../router/banner");
 const aboutRouter = require("../router/about");
+const testDriveRouter = require("../router/testDrive");
+const dealersRouter = require("../router/dealers");
+const tgBotRouter = require("../router/tgBot");
 const userRouter = require("../router/user");
 const authRouter = require("../router/auth");
 const error = require("../middleware/error");
@@ -30,6 +33,9 @@ module.exports=(app)=>{
     app.use('/api/product',productRouter)
     app.use('/api/banner',bannerRouter)
     app.use('/api/about',aboutRouter)
+    app.use('/api/testDrive',testDriveRouter)
+    app.use('/api/tgBot',tgBotRouter)
+    app.use('/api/dealers',dealersRouter)
     app.use('/api/user',userRouter)
     app.use('/api/auth',authRouter)
     app.use(error)

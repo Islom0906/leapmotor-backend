@@ -60,3 +60,5 @@ function validate(map){
 
 module.exports.Map=Map
 module.exports.validate=validate
+
+
