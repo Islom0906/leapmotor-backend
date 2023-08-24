@@ -1,7 +1,7 @@
 const express=require('express')
 const router=express.Router()
 const {User} =require('../model/userSchema')
-const _ =require('lodash')
+
 const bcrypt = require("bcrypt");
 const Joi = require("joi");
 
