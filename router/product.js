@@ -9,7 +9,7 @@ const auth=require('../middleware/auth')
 
 // GET
 router.get('/', async (req, res) => {
-    const product = await Product.find().sort({createdAt:1})
+    const product = await Product.find().sort({createdAt:-1})
 
     res.send(product)
 })
