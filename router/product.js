@@ -6,6 +6,7 @@ const validId = require('../middleware/validId')
 const isValidIdBody = require("../utils/isValidIdBody");
 const deleteMedias = require("../utils/deleteMedias");
 const auth=require('../middleware/auth')
+const {Map} = require("../model/mapSchema");
 
 // GET
 router.get('/', async (req, res) => {
@@ -13,7 +14,16 @@ router.get('/', async (req, res) => {
 
     res.send(product)
 })
+// GET BY ID
+router.get('/:id', validId,async (req, res) => {
+    const product = await Product.findById(req.params.id)
 
+    if (!product) {
+        res.status(400).send('Berilgan ID bo\'yicha malumot topilmadi')
+    }
+
+    res.send(product)
+})
 
 // POST
 router.post('/', auth,async (req, res) => {
