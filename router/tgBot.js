@@ -3,6 +3,7 @@ const router = express.Router()
 const {TgBot, validate} = require('../model/tgbotSchema')
 const validId = require('../middleware/validId')
 const auth=require('../middleware/auth')
+const {About} = require("../model/aboutSchema");
 
 // GET
 router.get('/', async (req, res) => {
@@ -11,6 +12,16 @@ router.get('/', async (req, res) => {
 })
 // GET ID
 router.get('/:id', validId,async (req, res) => {
+    const tgBot = await TgBot.findById(req.params.id)
+
+    if (!tgBot) {
+        res.status(400).send('Berilgan ID bo\'yicha malumot topilmadi')
+    }
+
+    res.send(tgBot)
+})
+
+router.get('/:id', async (req, res) => {
     const tgBot = await TgBot.findById(req.params.id)
 
     if (!tgBot) {

@@ -6,6 +6,7 @@ const validId = require('../middleware/validId')
 const isValidIdBody = require("../utils/isValidIdBody");
 const deleteMedias = require("../utils/deleteMedias");
 const auth=require('../middleware/auth')
+const {Map} = require("../model/mapSchema");
 
 // GET
 router.get('/', async (req, res) => {
@@ -14,6 +15,15 @@ router.get('/', async (req, res) => {
     res.send(filial)
 })
 
+router.get('/:id', async (req, res) => {
+    const filial = await Filial.findById(req.params.id)
+
+    if (!filial) {
+        res.status(400).send('Berilgan ID bo\'yicha malumot topilmadi')
+    }
+
+    res.send(filial)
+})
 
 // POST
 router.post('/', auth,async (req, res) => {

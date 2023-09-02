@@ -57,6 +57,7 @@ router.post('/',[auth,upload.array('media',10)],async (req,res)=>{
 })
 
 router.delete('/',auth,async (req,res)=>{
+    console.log(req.body)
     let medias=[]
     await Media.find({_id: {$in: req.body.ids}})
         .then((documents) => {

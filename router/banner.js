@@ -14,6 +14,8 @@ router.get('/', async (req, res) => {
 })
 
 
+
+
 // POST
 router.post('/',auth, async (req, res) => {
     const {error} = validate(req.body)

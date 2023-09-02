@@ -6,11 +6,22 @@ const isValidIdBody = require("../utils/isValidIdBody");
 const {Media} = require("../model/mediaSchema");
 const deleteMedias = require("../utils/deleteMedias");
 const auth=require('../middleware/auth')
+const {FilialInner} = require("../model/filialInnerSchema");
 // const admin=require('../middleware/admin')
 
 // GET
 router.get('/', async (req, res) => {
     const about = await About.find()
+    res.send(about)
+})
+
+router.get('/:id', async (req, res) => {
+    const about = await About.findById(req.params.id)
+
+    if (!about) {
+        res.status(400).send('Berilgan ID bo\'yicha malumot topilmadi')
+    }
+
     res.send(about)
 })
 
