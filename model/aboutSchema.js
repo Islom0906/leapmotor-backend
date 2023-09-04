@@ -137,7 +137,7 @@ const aboutSchema=mongoose.Schema({
         required:true
     },
     aboutSystems:{
-       type:aboutSystemsSchema,
+        type:aboutSystemsSchema,
         required:true
     }
 })

@@ -31,7 +31,10 @@ const testDriveSchema=mongoose.Schema({
         required:true,
     }
 
-})
+},
+    {
+        timestamps:true
+    })
 
 const TestDrive=mongoose.model('TestDrive',testDriveSchema)
 
