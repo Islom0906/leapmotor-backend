@@ -74,7 +74,7 @@ router.post('/', async (req, res) => {
 
 //PUT
 
-router.put('/:id', validId, async (req, res) => {
+router.put('/:id', [auth,validId], async (req, res) => {
     const {error} = validate(req.body)
 
     if (error) {
@@ -96,7 +96,7 @@ router.put('/:id', validId, async (req, res) => {
 
 //DELETE
 
-router.delete('/:id', validId, async (req, res) => {
+router.delete('/:id', [auth,validId], async (req, res) => {
     const testDrive = await TestDrive.findByIdAndRemove(req.params.id)
 
     if (!testDrive) {
