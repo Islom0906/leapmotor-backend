@@ -1,34 +1,36 @@
 const express = require('express')
 const router = express.Router()
-const {Position, validate} = require('../model/positionSchema')
+const {Interior, validate} = require('../model/interiorSchema')
 const validId = require('../middleware/validId')
 const isValidIdBody = require("../utils/isValidIdBody");
 const {Media} = require("../model/mediaSchema");
 const deleteMedias = require("../utils/deleteMedias");
 const auth = require('../middleware/auth')
+const {Exterior} = require("../model/exteriorSchema");
 
 router.get('/', async (req, res) => {
-    const {model}=req.query
-    let position=null
-    if (model){
-     position = await Position.find({model})
+    let {model,position,exterior}=req.query
+    let interior
+   interior = await Interior.find()
 
-    }else{
-     position = await Position.find()
+
+    if (model || position || exterior){
+        interior = await Interior.find({model,position,exterior})
+    }else {
+        interior = await Interior.find()
     }
-
-    res.send(position)
+    res.send(interior)
 })
 
 
 router.get('/:id', validId, async (req, res) => {
-    const position = await Position.findById(req.params.id)
+    const interior = await Interior.findById(req.params.id)
 
-    if (!position) {
+    if (!interior) {
         res.status(400).send('Berilgan ID bo\'yicha malumot topilmadi')
     }
 
-    res.send(position)
+    res.send(interior)
 })
 
 
@@ -37,22 +39,24 @@ router.post('/', async (req, res) => {
     if (error) {
         return res.status(400).send(error.details[0].message)
     }
-    const ValidId = isValidIdBody([req.body.mediaId])
+    const ValidId = isValidIdBody([req.body.colorMediaId,req.body.mediaId])
     if (!ValidId) {
         return res.status(400).send('Mavjud bo\'lmagan id')
     }
     const Image = await Media.findById(req.body.mediaId)
+    const ColorImage = await Media.findById(req.body.colorMediaId)
     try {
-        const position = await Position.create({
+        const interior = await Interior.create({
             model: req.body.model,
+            position:req.body.position,
+            exterior:req.body.exterior,
             name: req.body.name,
-            info: req.body.info,
             price: req.body.price,
-            includedList: req.body.includedList,
-            image: Image
+            image: Image,
+            colorImage:ColorImage,
         })
 
-        res.status(201).send(position)
+        res.status(201).send(interior)
     } catch (error) {
         res.send(error.message)
     }
@@ -63,41 +67,49 @@ router.put('/:id', validId, async (req, res) => {
     if (error) {
         return res.status(400).send(error.details[0].message)
     }
-    const ValidId = isValidIdBody([req.body.mediaId])
+    const ValidId = isValidIdBody([req.body.colorMediaId,req.body.mediaId])
     if (!ValidId) {
         return res.status(400).send('Mavjud bo\'lmagan id')
     }
     const Image = await Media.findById(req.body.mediaId)
+    const ColorImage = await Media.findById(req.body.colorMediaId)
     try {
-        const position = await Position.findByIdAndUpdate(req.params.id, {
+        const interior = await Interior.findByIdAndUpdate(req.params.id, {
             model: req.body.model,
+            position:req.body.position,
+            exterior:req.body.exterior,
             name: req.body.name,
-            info: req.body.info,
             price: req.body.price,
-            includedList: req.body.includedList,
-            image: Image
+            image: Image,
+            colorImage:ColorImage,
         },{new:true})
-        if (!position) {
+        if (!interior) {
             return res.status(404).send('Berilgan ID bo\'yicha malumot topilmadi')
         }
-        res.status(200).send(position)
+        res.status(200).send(interior)
     } catch (error) {
         res.send(error.message)
     }
 })
 
 router.delete('/:id', validId, async (req, res) => {
-    const position = await Position.findByIdAndRemove(req.params.id)
+    const interior = await Interior.findByIdAndRemove(req.params.id)
 
-    if (!position) {
+    if (!interior) {
         return res.status(404).send('Berilgan ID bo\'yicha malumot topilmadi')
     }
-
+    const imagesId = [interior.image._id,interior.colorImage._id]
     try {
 
-        await Media.findByIdAndRemove(position.image._id)
-        await deleteMedias([position.image])
-        res.send(position)
+        await Media.deleteMany({_id: {$in: imagesId}})
+            .then((result) => {
+                console.log(result)
+            })
+            .catch((error) => {
+                res.send(error.message)
+            });
+        await deleteMedias([interior.image,interior.colorImage])
+        res.send(interior)
     } catch (error) {
         res.send(error.message)
     }

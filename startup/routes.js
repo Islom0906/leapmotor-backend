@@ -14,6 +14,9 @@ const testDriveRouter = require("../router/testDrive");
 const dealersRouter = require("../router/dealers");
 const tgBotRouter = require("../router/tgBot");
 const positionRouter = require("../router/position");
+const exteriorRouter = require("../router/exterior");
+const interiorRouter = require("../router/interior");
+const optionRouter = require("../router/option");
 const userRouter = require("../router/user");
 const authRouter = require("../router/auth");
 const error = require("../middleware/error");
@@ -40,5 +43,8 @@ module.exports=(app)=>{
     app.use('/api/user',userRouter)
     app.use('/api/auth',authRouter)
     app.use('/api/position',positionRouter)
+    app.use('/api/exterior',exteriorRouter)
+    app.use('/api/interior',interiorRouter)
+    app.use('/api/option',optionRouter)
     app.use(error)
 }

@@ -14,7 +14,8 @@ const positionSchema = mongoose.Schema({
     },
     name: {
         type: String,
-        required: true
+        required: true,
+        unique:true
     },
     info: {
         type: String,
