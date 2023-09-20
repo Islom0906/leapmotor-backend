@@ -34,9 +34,9 @@ function validate(position) {
         model: Joi.string().required(),
         name: Joi.string().required(),
         info: Joi.string(),
-        price: Joi.string().required(),
+        price: Joi.number().required(),
         includedList: Joi.array().items((Joi.string())),
-        mediaId: Joi.number().required()
+        mediaId: Joi.string().required()
     })
 
     return Position.validate(position)
