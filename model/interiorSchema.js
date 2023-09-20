@@ -10,7 +10,7 @@ const interiorSchema = mongoose.Schema({
     name: {type: String, required: true,unique:true},
     colorImage: {type: mediaSchema, required: true},
     image: {type: mediaSchema, required: true},
-    price: {type: String},
+    price: {type: Number},
 })
 
 const Interior = mongoose.model('Interior', interiorSchema)
@@ -23,7 +23,7 @@ function validate(interior) {
         name:Joi.string().required(),
         colorMediaId:Joi.string().required(),
         mediaId:Joi.string().required(),
-        price:Joi.string(),
+        price:Joi.number(),
     })
 
     return Interior.validate(interior)

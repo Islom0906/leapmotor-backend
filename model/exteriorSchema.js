@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const Joi = require('joi')
 const {mediaSchema}=require('./mediaSchema')
+const {number} = require("joi");
 
 
 const exteriorSchema = mongoose.Schema({
@@ -9,7 +10,7 @@ const exteriorSchema = mongoose.Schema({
     name: {type: String, required: true,unique:true},
     colorImage: {type: mediaSchema, required: true},
     image: {type: mediaSchema, required: true},
-    price: {type: String},
+    price: {type: number()},
     commentPrice: {type: String}
 })
 
@@ -22,7 +23,7 @@ function validate(exterior) {
         name:Joi.string().required(),
         colorMediaId:Joi.string().required(),
         mediaId:Joi.string().required(),
-        price:Joi.string(),
+        price:Joi.number(),
         commentPrice:Joi.string().empty(''),
     })
 

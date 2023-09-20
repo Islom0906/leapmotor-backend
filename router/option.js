@@ -104,6 +104,7 @@ router.put('/:id', validId, async (req, res) => {
     }
     const Image = await Media.findById(req.body.mainMediaId)
 
+    console.log(Image)
     if (req.body.includes.length>0){
         for (let i=0;i<req.body.includes.length;i++){
             let image={

@@ -29,32 +29,46 @@ router.get('/:id', validId, async (req, res) => {
 
 
 router.post('/', async (req, res) => {
-    const optionArr=[]
-   const checkOption=[]
+    const optionArr = []
+    let checkOption = []
 
     const {error} = validate(req.body)
     if (error) {
         return res.status(400).send(error.details[0].message)
     }
 
+    req.body.option.forEach((item) => {
+        optionArr.push(item)
+    })
+
+    const checkPosition = await Position.find({model: req.body.model, name: req.body.position})
+    const checkExterior = await Exterior.find({
+        model: req.body.model,
+        position: req.body.position,
+        name: req.body.exterior
+    })
+    const checkInterior = await Interior.find({
+        model: req.body.model,
+        position: req.body.position,
+        exterior: req.body.exterior
+    })
 
 
-    const checkPosition=await Position.find({model:req.body.model,name:req.body.position})
-    const checkExterior=await Exterior.find({model:req.body.model,position:req.body.position,name:req.body.exterior})
-    const checkInterior=await Interior.find({model:req.body.model,position:req.body.position,exterior:req.body.exterior})
-
-
-    await Media.find({ name: { $in: optionArr } })
+    await Option.find({name: {$in: optionArr}})
         .then((documents) => {
-            teamImage = documents.map((document) => {
-                return { ...document.toObject(), model: 'T03' };
-            });
+            checkOption = documents
         })
         .catch((err) => {
-            res.send('Imagelarni topishda xatolikka yo\'l qoyildi', err.message);
+            res.send('Option topilmadi', err.message);
         });
 
-    await Option.find({model:req.body.model,position:req.body.position,exterior:req.body.exterior,name:req.body.option})
+
+    if (checkPosition.length!==0 && checkExterior.length!==0 && checkInterior.length!==0){
+        const customPrice=Number("")
+            +Number(checkExterior[0].price)+Number(checkInterior[0].price)
+
+        console.log(customPrice)
+    }
 
     console.log(checkPosition)
     console.log(checkExterior)
@@ -62,13 +76,8 @@ router.post('/', async (req, res) => {
     console.log(checkOption)
 
 
-
-
-
     try {
-        const position = await Order.create({
-
-        })
+        const position = await Order.create(req.body)
 
         res.status(201).send(position)
     } catch (error) {
@@ -83,9 +92,7 @@ router.put('/:id', validId, async (req, res) => {
     }
 
     try {
-        const position = await Order.findByIdAndUpdate(req.params.id, {
-
-        },{new:true})
+        const position = await Order.findByIdAndUpdate(req.params.id, {}, {new: true})
         if (!position) {
             return res.status(404).send('Berilgan ID bo\'yicha malumot topilmadi')
         }

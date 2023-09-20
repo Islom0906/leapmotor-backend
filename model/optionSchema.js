@@ -18,7 +18,7 @@ const optionSchema = mongoose.Schema({
     name: {type: String, required: true,unique:true},
     bonus: {type: String},
     includeComment: {type: String},
-    price: {type: String},
+    price: {type: Number},
     mainImage: {type: mediaSchema, required: true},
     includes: {type: [optionIncludSchema]}
 
@@ -35,7 +35,7 @@ function validate(option) {
         name:Joi.string().required(),
         bonus:Joi.string().empty(''),
         includeComment:Joi.string().empty(''),
-        price:Joi.string().empty(''),
+        price:Joi.number().empty(),
         mainMediaId:Joi.string().required(),
         includes:Joi.alternatives().try(
             Joi.array().empty(),

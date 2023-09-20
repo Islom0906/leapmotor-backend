@@ -21,7 +21,7 @@ const positionSchema = mongoose.Schema({
         type: String,
     },
     price: {
-        type: String,
+        type: Number,
         required: true
     },
     includedList: [{type: String}]
@@ -36,7 +36,7 @@ function validate(position) {
         info: Joi.string(),
         price: Joi.string().required(),
         includedList: Joi.array().items((Joi.string())),
-        mediaId: Joi.string().required()
+        mediaId: Joi.number().required()
     })
 
     return Position.validate(position)
