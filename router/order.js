@@ -6,7 +6,6 @@ const {Exterior} = require('../model/exteriorSchema')
 const {Interior} = require('../model/interiorSchema')
 const {Option} = require('../model/optionSchema')
 const validId = require('../middleware/validId')
-
 const auth = require('../middleware/auth')
 
 router.get('/', async (req, res) => {

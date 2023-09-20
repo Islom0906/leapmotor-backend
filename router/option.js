@@ -10,7 +10,6 @@ const auth = require('../middleware/auth')
 router.get('/', async (req, res) => {
     const {model,position,exterior,interior}=req.query
     let option=null
-     option = await Option.find()
 
     if (model || position || exterior||interior){
         option = await Option.find({model,position,exterior,interior})
@@ -64,9 +63,7 @@ router.post('/', async (req, res) => {
             }
             includes.push(includesObj)
         }
-        req.body.includes.map( async (item)=>{
 
-        })
     }
 
     try {
@@ -122,9 +119,7 @@ router.put('/:id', validId, async (req, res) => {
             }
             includes.push(includesObj)
         }
-        req.body.includes.map( async (item)=>{
 
-        })
     }
     try {
         const option = await Option.findByIdAndUpdate(req.params.id, {
