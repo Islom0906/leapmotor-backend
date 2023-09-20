@@ -7,7 +7,7 @@ const orderSchema=mongoose.Schema({
     exterior:{type:String,required: true},
     interior:{type:String,required: true},
     option:[{type:String}],
-    price:{type:String,required: true}
+    price:{type:Number,required: true}
 })
 
 const Order=mongoose.model('Order',orderSchema)
@@ -20,7 +20,7 @@ function validate(order){
         exterior:Joi.string().required(),
         interior:Joi.string().required(),
         option:Joi.array().items(Joi.string()),
-        price:Joi.string().required()
+        price:Joi.number().required()
 
     })
 

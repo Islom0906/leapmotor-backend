@@ -1,7 +1,6 @@
 const mongoose = require('mongoose')
 const Joi = require('joi')
 const {mediaSchema}=require('./mediaSchema')
-const {number} = require("joi");
 
 
 const exteriorSchema = mongoose.Schema({
@@ -10,7 +9,7 @@ const exteriorSchema = mongoose.Schema({
     name: {type: String, required: true,unique:true},
     colorImage: {type: mediaSchema, required: true},
     image: {type: mediaSchema, required: true},
-    price: {type: number()},
+    price: {type: Number},
     commentPrice: {type: String}
 })
 
