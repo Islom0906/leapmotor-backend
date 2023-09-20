@@ -1,10 +1,10 @@
 const mongoose = require('mongoose')
 const Joi = require('joi')
-const {mediaSchema}=require('./mediaSchema')
+const {mediaSchema} = require('./mediaSchema')
 
 
 const positionSchema = mongoose.Schema({
-    model:{
+    model: {
         type: String,
         required: true
     },
@@ -15,7 +15,7 @@ const positionSchema = mongoose.Schema({
     name: {
         type: String,
         required: true,
-        unique:true
+        unique: true
     },
     info: {
         type: String,
@@ -24,11 +24,7 @@ const positionSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    includedList: {
-        type: [
-            String
-        ]
-    }
+    includedList: [{type: String}]
 })
 
 const Position = mongoose.model('Position', positionSchema)
@@ -40,7 +36,7 @@ function validate(position) {
         info: Joi.string(),
         price: Joi.string().required(),
         includedList: Joi.array().items((Joi.string())),
-        mediaId:Joi.string().required()
+        mediaId: Joi.string().required()
     })
 
     return Position.validate(position)

@@ -7,7 +7,7 @@ const optionIncludSchema = mongoose.Schema({
     image: {type: mediaSchema},
     title: {type: String},
     comment: {type: String},
-    tags: {type: [String]}
+    tags: [{type: String}]
 })
 
 const optionSchema = mongoose.Schema({

@@ -17,6 +17,7 @@ const positionRouter = require("../router/position");
 const exteriorRouter = require("../router/exterior");
 const interiorRouter = require("../router/interior");
 const optionRouter = require("../router/option");
+const orderRouter = require("../router/order");
 const userRouter = require("../router/user");
 const authRouter = require("../router/auth");
 const error = require("../middleware/error");
@@ -45,6 +46,7 @@ module.exports=(app)=>{
     app.use('/api/position',positionRouter)
     app.use('/api/exterior',exteriorRouter)
     app.use('/api/interior',interiorRouter)
+    app.use('/api/order',orderRouter)
     app.use('/api/option',optionRouter)
     app.use(error)
 }
