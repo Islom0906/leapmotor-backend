@@ -59,7 +59,7 @@ router.post('/', async (req, res) => {
             const includesObj={
                 title:req.body.includes[i]?.title,
                 comment:req.body.includes[i]?.comment,
-                tag:req.body.includes[i]?.tags,
+                tags:req.body.includes[i]?.tags,
                 image
             }
             includes.push(includesObj)
@@ -68,6 +68,7 @@ router.post('/', async (req, res) => {
 
         })
     }
+
     try {
         const option = await Option.create({
             model: req.body.model,
@@ -115,7 +116,7 @@ router.put('/:id', validId, async (req, res) => {
             const includesObj={
                 title:req.body.includes[i]?.title,
                 comment:req.body.includes[i]?.comment,
-                tag:req.body.includes[i]?.tags,
+                tags:req.body.includes[i]?.tags,
                 image
             }
             includes.push(includesObj)
