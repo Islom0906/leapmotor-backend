@@ -8,6 +8,8 @@ const orderSchema=mongoose.Schema({
     interior:{type:String,required: true},
     option:[{type:String}],
     price:{type:Number,required: true}
+},{
+    timestamps:true
 })
 
 const Order=mongoose.model('Order',orderSchema)

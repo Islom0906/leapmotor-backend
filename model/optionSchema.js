@@ -15,7 +15,11 @@ const optionSchema = mongoose.Schema({
     position: {type: String, required: true},
     exterior:{type: String, required: true},
     interior:{type: String, required: true},
-    name: {type: String, required: true,unique:true},
+    name: {
+        type: String,
+        required: true,
+        unique: true
+    },
     bonus: {type: String},
     includeComment: {type: String},
     price: {type: Number},
@@ -23,6 +27,8 @@ const optionSchema = mongoose.Schema({
     includes: {type: [optionIncludSchema]}
 
 })
+
+optionSchema.index({ name: 1 }, { unique: true });
 
 const Option = mongoose.model('Option', optionSchema)
 

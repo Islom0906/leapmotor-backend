@@ -62,17 +62,26 @@ router.post('/', async (req, res) => {
         });
 
 
-    if (checkPosition.length!==0 && checkExterior.length!==0 && checkInterior.length!==0){
-        const customPrice=Number("")
-            +Number(checkExterior[0].price)+Number(checkInterior[0].price)
 
-        console.log(customPrice)
+
+
+    if (checkPosition.length!==0 && checkExterior.length!==0 && checkInterior.length!==0){
+        let customPrice = checkPosition[0].price
+            + checkExterior[0].price + checkInterior[0].price
+
+        if (checkOption.length > 0) {
+            console.log(checkOption.length)
+        checkOption?.forEach(item=>{
+            customPrice+=item.price
+            console.log(item.price)
+        })
+        }
+        console.log(checkPosition[0].price)
+        console.log(checkExterior[0].price)
+        console.log(checkInterior[0].price)
+        console.log('all',customPrice)
     }
 
-    console.log(checkPosition)
-    console.log(checkExterior)
-    console.log(checkInterior)
-    console.log(checkOption)
 
 
     try {
