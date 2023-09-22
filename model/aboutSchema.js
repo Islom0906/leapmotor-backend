@@ -3,7 +3,7 @@ const Joi=require('joi')
 const {mediaSchema}=require('./mediaSchema')
 
 
-const mainSectionSchema=mongoose.Schema({
+const mainSectionSchema= mongoose.Schema({
     textRu:{
         type: String,
         required: true

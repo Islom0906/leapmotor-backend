@@ -2,7 +2,7 @@ const mongoose=require('mongoose')
 const Joi=require('joi')
 const {mediaSchema}=require('./mediaSchema')
 
-const bannerSchema=mongoose.Schema({
+const bannerSchema= mongoose.Schema({
     imageLogo:{
         type:mediaSchema,
         required:true,

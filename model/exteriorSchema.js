@@ -3,15 +3,21 @@ const Joi = require('joi')
 const {mediaSchema}=require('./mediaSchema')
 
 
-const exteriorSchema = mongoose.Schema({
+const exteriorSchema = new mongoose.Schema({
     model:{type: String, required: true},
     position: {type: String, required: true},
-    name: {type: String, required: true,unique:true},
+    name: {
+        type: String,
+        required: true,
+        unique: true
+    },
     colorImage: {type: mediaSchema, required: true},
     image: {type: mediaSchema, required: true},
     price: {type: Number},
     commentPrice: {type: String}
 })
+
+exteriorSchema.index({ name: 1 }, { unique: true });
 
 const Exterior = mongoose.model('Exterior', exteriorSchema)
 

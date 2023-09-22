@@ -21,15 +21,6 @@ router.get('/:id', validId,async (req, res) => {
     res.send(tgBot)
 })
 
-router.get('/:id', async (req, res) => {
-    const tgBot = await TgBot.findById(req.params.id)
-
-    if (!tgBot) {
-        res.status(400).send('Berilgan ID bo\'yicha malumot topilmadi')
-    }
-
-    res.send(tgBot)
-})
 
 // POST
 router.post('/', auth,async (req, res) => {

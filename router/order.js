@@ -28,6 +28,7 @@ router.get('/:id', validId, async (req, res) => {
 
 
 router.post('/', async (req, res) => {
+    let customPrice=0
     const optionArr = []
     let checkOption = []
 
@@ -53,7 +54,9 @@ router.post('/', async (req, res) => {
     })
 
 
-    await Option.find({name: {$in: optionArr}})
+    await Option.find({
+        name: {$in: optionArr}, model: req.body.model, position: req.body.position, exterior: req.body.exterior
+    })
         .then((documents) => {
             checkOption = documents
         })
@@ -66,49 +69,49 @@ router.post('/', async (req, res) => {
 
 
     if (checkPosition.length!==0 && checkExterior.length!==0 && checkInterior.length!==0){
-        let customPrice = checkPosition[0].price
+         customPrice = checkPosition[0].price
             + checkExterior[0].price + checkInterior[0].price
 
         if (checkOption.length > 0) {
-            console.log(checkOption.length)
         checkOption?.forEach(item=>{
             customPrice+=item.price
-            console.log(item.price)
         })
         }
-        console.log(checkPosition[0].price)
-        console.log(checkExterior[0].price)
-        console.log(checkInterior[0].price)
-        console.log('all',customPrice)
+
     }
 
 
 
     try {
-        const position = await Order.create(req.body)
-
-        res.status(201).send(position)
-    } catch (error) {
-        res.send(error.message)
-    }
-})
-
-router.put('/:id', validId, async (req, res) => {
-    const {error} = validate(req.body)
-    if (error) {
-        return res.status(400).send(error.details[0].message)
-    }
-
-    try {
-        const position = await Order.findByIdAndUpdate(req.params.id, {}, {new: true})
-        if (!position) {
-            return res.status(404).send('Berilgan ID bo\'yicha malumot topilmadi')
+        if (customPrice===req.body.price){
+            const position = await Order.create(req.body)
+            res.status(201).send(position)
+        }else{
+            res.status(400).send('Malumotlar da xatolik borga o\'xshaydi')
         }
-        res.status(200).send(position)
+
+
     } catch (error) {
         res.send(error.message)
     }
 })
+
+// router.put('/:id', validId, async (req, res) => {
+//     const {error} = validate(req.body)
+//     if (error) {
+//         return res.status(400).send(error.details[0].message)
+//     }
+//
+//     try {
+//         const position = await Order.findByIdAndUpdate(req.params.id, {}, {new: true})
+//         if (!position) {
+//             return res.status(404).send('Berilgan ID bo\'yicha malumot topilmadi')
+//         }
+//         res.status(200).send(position)
+//     } catch (error) {
+//         res.send(error.message)
+//     }
+// })
 
 router.delete('/:id', validId, async (req, res) => {
     const position = await Order.findByIdAndRemove(req.params.id)

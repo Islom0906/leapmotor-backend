@@ -3,7 +3,7 @@ const Joi = require('joi')
 const {mediaSchema}=require('./mediaSchema')
 
 
-const optionIncludSchema = mongoose.Schema({
+const optionIncludSchema =new mongoose.Schema({
     image: {type: mediaSchema},
     title: {type: String},
     comment: {type: String},
@@ -41,7 +41,7 @@ function validate(option) {
         name:Joi.string().required(),
         bonus:Joi.string().empty(''),
         includeComment:Joi.string().empty(''),
-        price:Joi.number().empty(),
+        price:Joi.number().integer().empty(),
         mainMediaId:Joi.string().required(),
         includes:Joi.alternatives().try(
             Joi.array().empty(),

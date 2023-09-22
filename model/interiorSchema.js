@@ -3,7 +3,7 @@ const Joi = require('joi')
 const {mediaSchema}=require('./mediaSchema')
 
 
-const interiorSchema = mongoose.Schema({
+const interiorSchema =new mongoose.Schema({
     model:{type: String, required: true},
     position: {type: String, required: true},
     exterior:{type: String, required: true},
