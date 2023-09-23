@@ -56,9 +56,16 @@ router.post('/', async (req, res) => {
             colorImage:ColorImage,
         })
 
+        await interior.save()
         res.status(201).send(interior)
     } catch (error) {
-        res.send(error.message)
+        if (error.code === 11000) {
+            // MongoDB duplicate key error (code 11000)
+            res.status(400).json({ error: 'Duplicate key error' });
+        }  else {
+            // Handle other errors here
+            res.send(error.message)
+        }
     }
 })
 
@@ -83,6 +90,8 @@ router.put('/:id', validId, async (req, res) => {
             image: Image,
             colorImage:ColorImage,
         },{new:true})
+
+
         if (!interior) {
             return res.status(404).send('Berilgan ID bo\'yicha malumot topilmadi')
         }

@@ -40,11 +40,12 @@ router.post('/', async (req, res) => {
     if (error) {
         return res.status(400).send(error.details[0].message)
     }
-    const ValidId = isValidIdBody([req.body.mainMediaId])
+    const ValidId = isValidIdBody([req.body.mainMediaId,req.body.bannerMediaId])
     if (!ValidId) {
         return res.status(400).send('Mavjud bo\'lmagan id')
     }
     const Image = await Media.findById(req.body.mainMediaId)
+    const bannerImage = await Media.findById(req.body.bannerMediaId)
 
     if (req.body.includes.length>0){
         for (let i=0;i<req.body.includes.length;i++){
@@ -67,7 +68,7 @@ router.post('/', async (req, res) => {
     }
 
     try {
-        const option = await Option.create({
+        const option = await  Option.create({
             model: req.body.model,
             position:req.body.position,
             exterior:req.body.exterior,
@@ -77,13 +78,21 @@ router.post('/', async (req, res) => {
             bonus: req.body.bonus,
             includeComment: req.body.includeComment,
             mainImage: Image,
+            bannerImage,
             includes
         })
 
+        await option.save()
         res.status(201).send(option)
     } catch (error) {
+        if (error.code === 11000) {
+            // MongoDB duplicate key error (code 11000)
+            res.status(400).json({ error: 'Duplicate key error' });
+        }  else {
+            // Handle other errors here
+            res.send(error.message)
+        }
 
-        res.send(error.message)
     }
 })
 
@@ -95,13 +104,13 @@ router.put('/:id', validId, async (req, res) => {
     if (error) {
         return res.status(400).send(error.details[0].message)
     }
-    const ValidId = isValidIdBody([req.body.mainMediaId])
+    const ValidId = isValidIdBody([req.body.mainMediaId,req.body.bannerMediaId])
     if (!ValidId) {
         return res.status(400).send('Mavjud bo\'lmagan id')
     }
     const Image = await Media.findById(req.body.mainMediaId)
+    const bannerImage = await Media.findById(req.body.bannerMediaId)
 
-    console.log(Image)
     if (req.body.includes.length>0){
         for (let i=0;i<req.body.includes.length;i++){
             let image={
@@ -132,8 +141,10 @@ router.put('/:id', validId, async (req, res) => {
             bonus: req.body.bonus,
             includeComment: req.body.includeComment,
             mainMediaId: Image,
+            bannerImage,
             includes
         },{new:true})
+
         if (!option) {
             return res.status(404).send('Berilgan ID bo\'yicha malumot topilmadi')
         }

@@ -78,10 +78,17 @@ router.post('/',auth, async (req, res) => {
             description,
             slug
         })
+        await news.save()
         res.status(201).send(news)
 
     } catch (error) {
-        res.send(error.message)
+        if (error.code === 11000) {
+            // MongoDB duplicate key error (code 11000)
+            res.status(400).json({ error: 'Duplicate key error' });
+        }  else {
+            // Handle other errors here
+            res.send(error.message)
+        }
     }
 
 })

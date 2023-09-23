@@ -30,10 +30,18 @@ router.post('/', auth,async (req, res) => {
     }
     try {
         const map = await Map.create(req.body)
+
+        await map.save()
         res.status(201).send(map)
 
     } catch (error) {
-        res.send(error.message)
+        if (error.code === 11000) {
+            // MongoDB duplicate key error (code 11000)
+            res.status(400).json({ error: 'Duplicate key error' });
+        }  else {
+            // Handle other errors here
+            res.send(error.message)
+        }
     }
 
 })
@@ -49,6 +57,8 @@ router.put('/:id', [auth,validId], async (req, res) => {
 
     try{
         const map = await Map.findByIdAndUpdate(req.params.id, req.body, {new: true})
+
+
         if (!map){
             return res.status(404).send('Berilgan ID bo\'yicha malumot topilmadi')
         }

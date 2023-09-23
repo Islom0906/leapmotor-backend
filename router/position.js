@@ -42,6 +42,7 @@ router.post('/', async (req, res) => {
         return res.status(400).send('Mavjud bo\'lmagan id')
     }
     const Image = await Media.findById(req.body.mediaId)
+
     try {
         const position = await Position.create({
             model: req.body.model,
@@ -52,9 +53,18 @@ router.post('/', async (req, res) => {
             image: Image
         })
 
+        await position.save()
+
         res.status(201).send(position)
     } catch (error) {
-        res.send(error.message)
+        console.log(error)
+        if (error.code === 11000) {
+            // MongoDB duplicate key error (code 11000)
+            res.status(400).json({ error: 'Duplicate key error' });
+        }  else {
+            // Handle other errors here
+            res.send(error.message)
+        }
     }
 })
 
@@ -77,6 +87,7 @@ router.put('/:id', validId, async (req, res) => {
             includedList: req.body.includedList,
             image: Image
         },{new:true})
+
         if (!position) {
             return res.status(404).send('Berilgan ID bo\'yicha malumot topilmadi')
         }

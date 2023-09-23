@@ -33,7 +33,7 @@ function validate(position) {
     const Position = Joi.object({
         model: Joi.string().required(),
         name: Joi.string().required(),
-        info: Joi.string(),
+        info: Joi.string().empty(""),
         price: Joi.number().required(),
         includedList: Joi.array().items((Joi.string())),
         mediaId: Joi.string().required()

@@ -52,10 +52,16 @@ router.post('/', async (req, res) => {
             colorImage: ColorImage,
             commentPrice: req.body.commentPrice
         })
-
+        await exterior.save()
         res.status(201).send(exterior)
     } catch (error) {
-        res.send(error.message)
+        if (error.code === 11000) {
+            // MongoDB duplicate key error (code 11000)
+            res.status(400).json({ error: 'Duplicate key error' });
+        }  else {
+            // Handle other errors here
+            res.send(error.message)
+        }
     }
 })
 
