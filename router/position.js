@@ -10,6 +10,7 @@ const auth = require('../middleware/auth')
 router.get('/', async (req, res) => {
     const {model}=req.query
     let position=null
+    console.log(model)
     if (model){
      position = await Position.find({model})
 

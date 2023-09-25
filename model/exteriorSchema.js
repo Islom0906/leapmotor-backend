@@ -8,8 +8,7 @@ const exteriorSchema = new mongoose.Schema({
     position: {type: String, required: true},
     name: {
         type: String,
-        required: true,
-        unique: true
+        required: true
     },
     colorImage: {type: mediaSchema, required: true},
     image: {type: mediaSchema, required: true},
