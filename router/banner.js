@@ -100,7 +100,6 @@ router.delete('/:id', [auth,validId], async (req, res) => {
     }
     const imagesId = [banner.imageLogo._id,banner.imageBrand._id,banner.videoBanner._id]
 
-    console.log(banner)
     try {
 
         await Media.deleteMany({_id: {$in: imagesId}})

@@ -32,7 +32,7 @@ router.get('/:id', validId, async (req, res) => {
 })
 
 
-router.post('/', async (req, res) => {
+router.post('/', auth,async (req, res) => {
     const {error} = validate(req.body)
     if (error) {
         return res.status(400).send(error.details[0].message)
@@ -68,7 +68,7 @@ router.post('/', async (req, res) => {
     }
 })
 
-router.put('/:id', validId, async (req, res) => {
+router.put('/:id', [auth,validId], async (req, res) => {
     const {error} = validate(req.body)
     if (error) {
         return res.status(400).send(error.details[0].message)
@@ -97,7 +97,7 @@ router.put('/:id', validId, async (req, res) => {
     }
 })
 
-router.delete('/:id', validId, async (req, res) => {
+router.delete('/:id', [auth,validId], async (req, res) => {
     const position = await Position.findByIdAndRemove(req.params.id)
 
     if (!position) {

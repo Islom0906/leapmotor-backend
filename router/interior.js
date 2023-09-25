@@ -6,14 +6,12 @@ const isValidIdBody = require("../utils/isValidIdBody");
 const {Media} = require("../model/mediaSchema");
 const deleteMedias = require("../utils/deleteMedias");
 const auth = require('../middleware/auth')
-const {Exterior} = require("../model/exteriorSchema");
+
+
 
 router.get('/', async (req, res) => {
     let {model,position,exterior}=req.query
     let interior
-   interior = await Interior.find()
-
-
     if (model || position || exterior){
         interior = await Interior.find({model,position,exterior})
     }else {
@@ -21,6 +19,7 @@ router.get('/', async (req, res) => {
     }
     res.send(interior)
 })
+
 
 
 router.get('/:id', validId, async (req, res) => {
@@ -34,7 +33,7 @@ router.get('/:id', validId, async (req, res) => {
 })
 
 
-router.post('/', async (req, res) => {
+router.post('/', auth,async (req, res) => {
     const {error} = validate(req.body)
     if (error) {
         return res.status(400).send(error.details[0].message)
@@ -69,7 +68,7 @@ router.post('/', async (req, res) => {
     }
 })
 
-router.put('/:id', validId, async (req, res) => {
+router.put('/:id', [auth,validId], async (req, res) => {
     const {error} = validate(req.body)
     if (error) {
         return res.status(400).send(error.details[0].message)
@@ -101,7 +100,7 @@ router.put('/:id', validId, async (req, res) => {
     }
 })
 
-router.delete('/:id', validId, async (req, res) => {
+router.delete('/:id', [auth,validId], async (req, res) => {
     const interior = await Interior.findByIdAndRemove(req.params.id)
 
     if (!interior) {

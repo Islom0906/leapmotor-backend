@@ -32,7 +32,7 @@ router.get('/:id', validId, async (req, res) => {
 })
 
 
-router.post('/', async (req, res) => {
+router.post('/', auth,async (req, res) => {
 
     let includes=[]
 
@@ -96,7 +96,7 @@ router.post('/', async (req, res) => {
     }
 })
 
-router.put('/:id', validId, async (req, res) => {
+router.put('/:id', [auth,validId], async (req, res) => {
 
     let includes=[]
 
@@ -154,7 +154,7 @@ router.put('/:id', validId, async (req, res) => {
     }
 })
 
-router.delete('/:id', validId, async (req, res) => {
+router.delete('/:id', [auth,validId], async (req, res) => {
     const option = await Option.findByIdAndRemove(req.params.id)
 
     if (!option) {

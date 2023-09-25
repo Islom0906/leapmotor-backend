@@ -82,7 +82,6 @@ router.post('/', async (req, res) => {
                     await bot.sendMessage(chat?.tgId, sendMessageBot(dealers), {parse_mode: 'HTML'})
                 }
             } catch (err) {
-                console.log(err.message)
                 res.send(err.message)
             }
 

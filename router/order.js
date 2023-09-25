@@ -7,6 +7,28 @@ const {Interior} = require('../model/interiorSchema')
 const {Option} = require('../model/optionSchema')
 const validId = require('../middleware/validId')
 const auth = require('../middleware/auth')
+const {TgBot} = require("../model/tgbotSchema");
+const bot = require("../utils/telegrambot");
+
+
+const sendMessageBot=(text)=>{
+
+    const htmlMessage= `
+<strong>Заказ машина</strong>
+
+<strong>Модель</strong>: ${text?.model}
+<strong>Позиция</strong>: ${text?.position}
+<strong>Экстерьер</strong>: ${text?.exterior} 
+<strong>Интерьер</strong>: ${text?.interior}
+<strong>Параметры</strong>: ${text?.option.map(item=>({item}))}
+<strong>Цена</strong>: ${text?.price}
+
+<strong>Имя</strong>: <code>${text?.userName}</code>
+<strong>Тел</strong>: ${text?.phone}
+`
+    return htmlMessage
+
+}
 
 router.get('/', async (req, res) => {
     const position = await Order.find()
@@ -85,6 +107,21 @@ router.post('/', async (req, res) => {
     try {
         if (customPrice===req.body.price){
             const position = await Order.create(req.body)
+            const chatIds = await TgBot.find()
+            chatIds?.map(async (chat) => {
+                try {
+
+                    if (chat?.role === 'all') {
+                        await bot.sendMessage(chat?.tgId, sendMessageBot(position), {parse_mode: 'HTML'})
+                    }
+                    if (chat?.role === 'order') {
+                        await bot.sendMessage(chat?.tgId, sendMessageBot(position), {parse_mode: 'HTML'})
+                    }
+                } catch (err) {
+                    res.send(err.message)
+                }
+
+            })
             res.status(201).send(position)
         }else{
             res.status(400).send('Malumotlar da xatolik borga o\'xshaydi')
@@ -113,7 +150,7 @@ router.post('/', async (req, res) => {
 //     }
 // })
 
-router.delete('/:id', validId, async (req, res) => {
+router.delete('/:id', [auth,validId], async (req, res) => {
     const position = await Order.findByIdAndRemove(req.params.id)
 
     if (!position) {
