@@ -12,6 +12,7 @@ const bot = require("../utils/telegrambot");
 
 
 const sendMessageBot=(text)=>{
+    const options = text?.option.join(', ');
 
     const htmlMessage= `
 <strong>Заказ машина</strong>
@@ -20,7 +21,7 @@ const sendMessageBot=(text)=>{
 <strong>Позиция</strong>: ${text?.position}
 <strong>Экстерьер</strong>: ${text?.exterior} 
 <strong>Интерьер</strong>: ${text?.interior}
-<strong>Параметры</strong>: ${text?.option.map(item=>({item}))}
+<strong>Параметры</strong>: ${options}
 <strong>Цена</strong>: ${text?.price}
 
 <strong>Имя</strong>: <code>${text?.userName}</code>
