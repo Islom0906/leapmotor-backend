@@ -15,8 +15,18 @@ const tgBotSchema=mongoose.Schema({
         type:String,
         required:true,
     },
+    region:{
+        type:String,
+        required:false
+    },
+    dealer:{
+        type:String,
+        required:false
+    },
 
 })
+
+
 
 const TgBot=mongoose.model('TgBot',tgBotSchema)
 
@@ -25,8 +35,8 @@ function validate(tgBot){
         name:Joi.string().required(),
         tgId:Joi.string().required(),
         role:Joi.string().required(),
-
-
+        region:Joi.string().allow(''),
+        dealer:Joi.string().allow('')
     })
 
     return validateTgBot.validate(tgBot)

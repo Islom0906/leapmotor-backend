@@ -5,6 +5,7 @@ const {TgBot} = require('../model/tgbotSchema')
 const validId = require('../middleware/validId')
 const auth = require('../middleware/auth')
 const bot=require('../utils/telegrambot')
+const {Region} = require("../model/regionSchema");
 
 const sendMessageBot=(text)=>{
 
@@ -56,7 +57,7 @@ router.post('/', async (req, res) => {
                 if (chat?.role === 'all') {
                     await bot.sendMessage(chat?.tgId, sendMessageBot(testDrive), {parse_mode: 'HTML'})
                 }
-                if (chat?.role === 'drive') {
+                if (chat?.role === 'drive'&& chat?.region===testDrive.region && chat?.dealer===testDrive.dealer) {
                     await bot.sendMessage(chat?.tgId, sendMessageBot(testDrive), {parse_mode: 'HTML'})
                 }
             } catch (err) {

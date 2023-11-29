@@ -37,6 +37,10 @@ const mapSchema=mongoose.Schema({
         unique:true
 
     },
+    link:{
+        type:String,
+        required:true
+    }
 })
 
 const Map=mongoose.model('Map',mapSchema)
@@ -51,6 +55,7 @@ function validate(map){
         tel:Joi.string().required(),
         lat:Joi.string().required(),
         lng:Joi.string().required(),
+        link:Joi.string().required()
 
     })
 

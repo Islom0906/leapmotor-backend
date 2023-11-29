@@ -17,6 +17,7 @@ const positionRouter = require("../router/position");
 const exteriorRouter = require("../router/exterior");
 const interiorRouter = require("../router/interior");
 const optionRouter = require("../router/option");
+const regionRouter = require("../router/region");
 const orderRouter = require("../router/order");
 const userRouter = require("../router/user");
 const authRouter = require("../router/auth");
@@ -48,5 +49,6 @@ module.exports=(app)=>{
     app.use('/api/interior',interiorRouter)
     app.use('/api/order',orderRouter)
     app.use('/api/option',optionRouter)
+    app.use('/api/region',regionRouter)
     app.use(error)
 }
