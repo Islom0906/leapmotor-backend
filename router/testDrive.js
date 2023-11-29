@@ -5,7 +5,7 @@ const {TgBot} = require('../model/tgbotSchema')
 const validId = require('../middleware/validId')
 const auth = require('../middleware/auth')
 const bot=require('../utils/telegrambot')
-const {Region} = require("../model/regionSchema");
+
 
 const sendMessageBot=(text)=>{
 
