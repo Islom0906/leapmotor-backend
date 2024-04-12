@@ -16,7 +16,6 @@ router.get('/', async (req, res) => {
     }else {
         option = await Option.find()
     }
-
     res.send(option)
 })
 
