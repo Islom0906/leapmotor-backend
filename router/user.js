@@ -11,13 +11,13 @@ router.get('/me',auth,async (req,res)=>{
     res.send(user)
 })
 
-router.get('/',async (req,res)=>{
+router.get('/',auth,async (req,res)=>{
 
     const user=await User.find().select('-password')
     res.send(user)
 })
 
-router.post('/', async (req,res)=>{
+router.post('/', auth,async (req,res)=>{
     const {error}=validate(req.body)
 
     if (error){
