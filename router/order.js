@@ -9,6 +9,9 @@ const validId = require('../middleware/validId')
 const auth = require('../middleware/auth')
 const {TgBot} = require("../model/tgbotSchema");
 const bot = require("../utils/telegrambot");
+const checkAccessToken = require("../utils/checkAccessToken");
+const getToken = require("../utils/getCRMTokens");
+const axios = require("../utils/axios");
 
 
 const sendMessageBot=(text)=>{
@@ -100,7 +103,6 @@ router.post('/', async (req, res) => {
             customPrice+=item.price
         })
         }
-
     }
 
 
@@ -123,13 +125,88 @@ router.post('/', async (req, res) => {
                 }
 
             })
+            await checkAccessToken()
+            const data = [
+                {
+                    name: "Заказывает автомобиль",
+                    price:req.body.price,
+                    pipeline_id:parseInt(process.env.AMOCRM_ORDER_CAR_PIPELINE_ID),
+                    custom_fields_values: [
+                        {
+                            field_id: parseInt(process.env.AMOCRM_LEADS_MODEL_ID),
+                            values: [
+                                {
+                                    value: req.body.model
+
+                                }
+                            ]
+                        },
+                        {
+                            field_id: parseInt(process.env.AMOCRM_LEADS_POSITION_ID),
+                            values: [
+                                {
+                                    value: req.body.position
+
+                                }
+                            ]
+                        },
+                        {
+                            field_id: parseInt(process.env.AMOCRM_LEADS_EXTERIOR_ID),
+                            values: [
+                                {
+                                    value: req.body.exterior
+
+                                }
+                            ]
+                        },
+                        {
+                            field_id: parseInt(process.env.AMOCRM_LEADS_INTERIOR_ID),
+                            values: [
+                                {
+                                    value: req.body.interior
+
+                                }
+                            ]
+                        },
+
+                        {
+                            field_id: parseInt(process.env.AMOCRM_LEADS_NAME_ID),
+                            values: [
+                                {
+                                    value: req.body.userName
+
+                                }
+                            ]
+                        },
+                        {
+                            field_id:  parseInt(process.env.AMOCRM_LEADS_TEL_ID),
+                            values: [
+                                {
+                                    value: req.body.phone
+
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+
+            const {accessToken} = await getToken()
+
+            await axios.post('api/v4/leads', data, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            })
+
+
             res.status(201).send(position)
         }else{
             res.status(400).send('Malumotlar da xatolik borga o\'xshaydi')
         }
 
-
     } catch (error) {
+        console.log(error)
         res.send(error.message)
     }
 })

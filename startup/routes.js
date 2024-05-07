@@ -19,6 +19,7 @@ const interiorRouter = require("../router/interior");
 const optionRouter = require("../router/option");
 const regionRouter = require("../router/region");
 const orderRouter = require("../router/order");
+const amoCRMRouter = require("../router/amoCRMIntegration");
 const userRouter = require("../router/user");
 const authRouter = require("../router/auth");
 const error = require("../middleware/error");
@@ -50,5 +51,6 @@ module.exports=(app)=>{
     app.use('/api/order',orderRouter)
     app.use('/api/option',optionRouter)
     app.use('/api/region',regionRouter)
+    app.use('/api/amoCRMIntegration',amoCRMRouter)
     app.use(error)
 }

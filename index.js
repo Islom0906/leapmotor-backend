@@ -8,6 +8,7 @@ require('./startup/db')()
 require('./startup/config')()
 
 
+
 const port=process.env.PORT || 4100
 app.listen(port,()=>{
     winston.info(`${port} ni eshitishni boshladim`)

@@ -4,12 +4,15 @@ const {TestDrive, validate} = require('../model/testDriveSchema')
 const {TgBot} = require('../model/tgbotSchema')
 const validId = require('../middleware/validId')
 const auth = require('../middleware/auth')
-const bot=require('../utils/telegrambot')
+const bot = require('../utils/telegrambot')
+const axios = require('../utils/axios')
+const checkAccessToken = require('../utils/checkAccessToken')
+const getToken = require('../utils/getCRMTokens')
 
 
-const sendMessageBot=(text)=>{
+const sendMessageBot = (text) => {
 
-    const htmlMessage= `
+    const htmlMessage = `
 <strong>Заказ тест-драйва</strong>
 
 <strong>Модель</strong>: ${text?.model}
@@ -20,7 +23,7 @@ const sendMessageBot=(text)=>{
 <strong>Имя</strong>: <code>${text?.name}</code>
 <strong>Тел</strong>: ${text?.tel}
 `
- return htmlMessage
+    return htmlMessage
 
 }
 
@@ -57,7 +60,7 @@ router.post('/', async (req, res) => {
                 if (chat?.role === 'all') {
                     await bot.sendMessage(chat?.tgId, sendMessageBot(testDrive), {parse_mode: 'HTML'})
                 }
-                if (chat?.role === 'drive'&& chat?.region===testDrive.region && chat?.dealer===testDrive.dealer) {
+                if (chat?.role === 'drive' && chat?.region === testDrive.region && chat?.dealer === testDrive.dealer) {
                     await bot.sendMessage(chat?.tgId, sendMessageBot(testDrive), {parse_mode: 'HTML'})
                 }
             } catch (err) {
@@ -65,6 +68,87 @@ router.post('/', async (req, res) => {
             }
 
         })
+
+        await checkAccessToken()
+        const data = [
+            {
+                name: "Тест-драйв",
+                pipeline_id:parseInt(process.env.AMOCRM_TEST_DRIVE_PIPELINE_ID),
+                custom_fields_values: [
+                    {
+                        field_id: parseInt(process.env.AMOCRM_LEADS_MODEL_ID),
+                        values: [
+                            {
+                                value: req.body.model
+
+                            }
+                        ]
+                    },
+                    {
+                        field_id: parseInt(process.env.AMOCRM_LEADS_REGION_ID),
+                        values: [
+                            {
+                                value: req.body.region
+
+                            }
+                        ]
+                    },
+                    {
+                        field_id: parseInt(process.env.AMOCRM_LEADS_DEALER_ID),
+                        values: [
+                            {
+                                value: req.body.dealer
+
+                            }
+                        ]
+                    },
+                    {
+                        field_id: parseInt(process.env.AMOCRM_LEADS_DAY_ID),
+                        values: [
+                            {
+                                value: req.body.day
+
+                            }
+                        ]
+                    },
+                    {
+                        field_id: parseInt(process.env.AMOCRM_LEADS_TIME_ID),
+                        values: [
+                            {
+                                value: req.body.hour
+
+                            }
+                        ]
+                    },
+                    {
+                        field_id: parseInt(process.env.AMOCRM_LEADS_NAME_ID),
+                        values: [
+                            {
+                                value: req.body.name
+
+                            }
+                        ]
+                    },
+                    {
+                        field_id: parseInt(process.env.AMOCRM_LEADS_TEL_ID),
+                        values: [
+                            {
+                                value: req.body.tel
+
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+        const {accessToken} = await getToken()
+
+        await axios.post('api/v4/leads', data, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }
+        })
+
         res.status(201).send(testDrive)
 
     } catch (error) {
@@ -75,7 +159,7 @@ router.post('/', async (req, res) => {
 
 //PUT
 
-router.put('/:id', [auth,validId], async (req, res) => {
+router.put('/:id', [auth, validId], async (req, res) => {
     const {error} = validate(req.body)
 
     if (error) {
@@ -97,7 +181,7 @@ router.put('/:id', [auth,validId], async (req, res) => {
 
 //DELETE
 
-router.delete('/:id', [auth,validId], async (req, res) => {
+router.delete('/:id', [auth, validId], async (req, res) => {
     const testDrive = await TestDrive.findByIdAndRemove(req.params.id)
 
     if (!testDrive) {

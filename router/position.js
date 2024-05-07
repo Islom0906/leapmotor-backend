@@ -10,7 +10,6 @@ const auth = require('../middleware/auth')
 router.get('/', async (req, res) => {
     const {model}=req.query
     let position=null
-    console.log(model)
     if (model){
      position = await Position.find({model})
 
@@ -58,7 +57,6 @@ router.post('/', auth,async (req, res) => {
 
         res.status(201).send(position)
     } catch (error) {
-        console.log(error)
         if (error.code === 11000) {
             // MongoDB duplicate key error (code 11000)
             res.status(400).json({ error: 'Duplicate key error' });
