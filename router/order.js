@@ -111,7 +111,10 @@ router.post('/', async (req, res) => {
         if (customPrice===req.body.price){
             const position = await Order.create(req.body)
             const chatIds = await TgBot.find()
-            chatIds?.map(async (chat) => {
+            const errors = [];
+
+
+            await Promise.all(chatIds?.map(async (chat) => {
                 try {
 
                     if (chat?.role === 'all') {
@@ -121,10 +124,11 @@ router.post('/', async (req, res) => {
                         await bot.sendMessage(chat?.tgId, sendMessageBot(position), {parse_mode: 'HTML'})
                     }
                 } catch (err) {
-                    res.send(err.message)
+                    errors.push(err.message)
                 }
 
-            })
+            }))
+
             await checkAccessToken()
             const data = [
                 {

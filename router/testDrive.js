@@ -54,7 +54,9 @@ router.post('/', async (req, res) => {
     try {
         const testDrive = await TestDrive.create(req.body)
         const chatIds = await TgBot.find()
-        chatIds?.map(async (chat) => {
+        const errors = [];
+
+        await Promise.all(chatIds?.map(async (chat) => {
             try {
 
                 if (chat?.role === 'all') {
@@ -64,10 +66,14 @@ router.post('/', async (req, res) => {
                     await bot.sendMessage(chat?.tgId, sendMessageBot(testDrive), {parse_mode: 'HTML'})
                 }
             } catch (err) {
-                res.send(err.message)
+                errors.push(err.message)
             }
 
-        })
+        }))
+        // console.log(errors)
+        // if (errors.length > 0) {
+        //     return res.status(500).send(errors.join('\n'));
+        // }
 
         await checkAccessToken()
         const data = [
@@ -143,11 +149,12 @@ router.post('/', async (req, res) => {
         ]
         const {accessToken} = await getToken()
 
-        await axios.post('api/v4/leads', data, {
+   await axios.post('api/v4/leads', data, {
             headers: {
                 Authorization: `Bearer ${accessToken}`
             }
         })
+
 
         res.status(201).send(testDrive)
 
