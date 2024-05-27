@@ -4,15 +4,15 @@ const {Dealers, validate} = require('../model/dealersSchema')
 const {TgBot} = require('../model/tgbotSchema')
 const validId = require('../middleware/validId')
 const auth = require('../middleware/auth')
-const bot=require('../utils/telegrambot')
-// const checkAccessToken = require("../utils/checkAccessToken");
-// const getToken = require("../utils/getCRMTokens");
-// const axios = require("../utils/axios");
+const bot = require('../utils/telegrambot')
+const checkAccessToken = require("../utils/checkAccessToken");
+const getToken = require("../utils/getCRMTokens");
+const axios = require("../utils/axios");
 
 
-const sendMessageBot=(text)=>{
+const sendMessageBot = (text) => {
 
-    const htmlMessage= `
+    const htmlMessage = `
 <strong>Новые дилеры</strong>
 
 <strong><i>Общая информация</i></strong>
@@ -44,7 +44,7 @@ const sendMessageBot=(text)=>{
 
 <strong>Банковские реквизиты</strong>: ${text?.otherInformation}
 `
- return htmlMessage
+    return htmlMessage
 
 }
 
@@ -75,7 +75,9 @@ router.post('/', async (req, res) => {
     try {
         const dealers = await Dealers.create(req.body)
         const chatIds = await TgBot.find()
-        chatIds?.map(async (chat) => {
+        const errors = [];
+
+        await Promise.all(chatIds?.map(async (chat) => {
             try {
 
                 if (chat?.role === 'all') {
@@ -85,155 +87,147 @@ router.post('/', async (req, res) => {
                     await bot.sendMessage(chat?.tgId, sendMessageBot(dealers), {parse_mode: 'HTML'})
                 }
             } catch (err) {
-                res.send(err.message)
+                errors.push(err.message)
+            }
+
+        }))
+
+
+
+
+        await checkAccessToken()
+        const data = [
+            {
+                name: "Заказать стать дилером",
+                pipeline_id:parseInt(process.env.AMOCRM_COMPANY_PIPELINE_ID),
+                custom_fields_values: [
+                    {
+                        field_id: parseInt(process.env.AMOCRM_COMPANY_SERVICE_AREA),
+                        values: [
+                            {
+                                value: req.body.serviceUsableArea
+
+                            }
+                        ]
+                    },
+                    {
+                        field_id: parseInt(process.env.AMOCRM_COMPANY_OTHER_INFORMATION),
+                        values: [
+                            {
+                                value: req.body.otherInformation
+
+                            }
+                        ]
+                    },
+                    {
+                        field_id: parseInt(process.env.AMOCRM_COMPANY_CONTACT_PERSON),
+                        values: [
+                            {
+                                value: req.body.contactPerson
+
+                            }
+                        ]
+                    },
+                    {
+                        field_id: parseInt(process.env.AMOCRM_COMPANY_SALE_MONTH),
+                        values: [
+                            {
+                                value: req.body.salesMonth
+
+                            }
+                        ]
+                    },
+                    {
+                        field_id: parseInt(process.env.AMOCRM_COMPANY_SOLD_CARD),
+                        values: [
+                            {
+                                value: req.body.infoAboutSoldCard
+
+                            }
+                        ]
+                    },
+                    {
+                        field_id: parseInt(process.env.AMOCRM_COMPANY_CAR_EXPERIENS),
+                        values: [
+                            {
+                                value: req.body.carExperience
+
+                            }
+                        ]
+                    },
+                    {
+                        field_id: parseInt(process.env.AMOCRM_COMPANY_SERVICE_TOTAL_AREA),
+                        values: [
+                            {
+                                value: req.body.serviceTotalArea
+
+                            }
+                        ]
+                    },
+                    {
+                        field_id: parseInt(process.env.AMOCRM_COMPANY_SHOWROOM_AREA),
+                        values: [
+                            {
+                                value: req.body.showroomUsableArea
+
+                            }
+                        ]
+                    },
+                    {
+                        field_id: parseInt(process.env.AMOCRM_COMPANY_SHOWROOM_TOTAL_AREA),
+                        values: [
+                            {
+                                value: req.body.serviceTotalArea
+
+                            }
+                        ]
+                    },
+                    {
+                        field_id: parseInt(process.env.AMOCRM_COMPANY_SHOWROOM_COUNT_USER),
+                        values: [
+                            {
+                                value: req.body.countUser
+
+                            }
+                        ]
+                    },
+                    {
+                        field_id: parseInt(process.env.AMOCRM_COMPANY_SHOWROOM_ADDRESS),
+                        values: [
+                            {
+                                value: req.body.address
+
+                            }
+                        ]
+                    },
+                    {
+                        field_id: parseInt(process.env.AMOCRM_COMPANY_REGION),
+                        values: [
+                            {
+                                value: req.body.region
+
+                            }
+                        ]
+                    },
+                    {
+                        field_id: parseInt(process.env.AMOCRM_COMPANY_NAME_ENTERPRISES),
+                        values: [
+                            {
+                                value: req.body.nameEnterprises
+
+                            }
+                        ]
+                    },
+                ]
+            }
+        ]
+
+        const {accessToken} = await getToken()
+        await axios.post('api/v4/leads', data, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
             }
         })
-
-       // AMOCRM_COMPANY_SERVICE_AREA=400989
-        // AMOCRM_COMPANY_OTHER_INFORMATION=401209
-        // AMOCRM_COMPANY_CONTACT_PERSON=401001
-        // AMOCRM_COMPANY_SALE_MONTH=400999
-        // AMOCRM_COMPANY_SOLD_CARD=400995
-        // AMOCRM_COMPANY_CAR_EXPERIENS=400991
-        // AMOCRM_COMPANY_SERVICE_TOTAL_AREA=400985
-        // AMOCRM_COMPANY_SHOWROOM_AREA=400981
-        // AMOCRM_COMPANY_SHOWROOM_TOTAL_AREA=400929
-        // AMOCRM_COMPANY_SHOWROOM_COUNT_USER=400927
-        // AMOCRM_COMPANY_SHOWROOM_ADDRESS=400877
-        // AMOCRM_COMPANY_REGION=400875
-        // AMOCRM_COMPANY_NAME_ENTERPRISES=400871
-//         await checkAccessToken()
-//         const data = [
-//             {
-//                 name: "Заказать стать дилером",
-//                 custom_fields_values: [
-//                     {
-//                         field_id: parseInt(process.env.AMOCRM_COMPANY_SERVICE_AREA),
-//                         values: [
-//                             {
-//                                 value: req.body.serviceUsableArea
-//
-//                             }
-//                         ]
-//                     },
-//                     {
-//                         field_id: parseInt(process.env.AMOCRM_COMPANY_OTHER_INFORMATION),
-//                         values: [
-//                             {
-//                                 value: req.body.otherInformation
-//
-//                             }
-//                         ]
-//                     },
-//                     {
-//                         field_id: parseInt(process.env.AMOCRM_COMPANY_CONTACT_PERSON),
-//                         values: [
-//                             {
-//                                 value: req.body.contactPerson
-//
-//                             }
-//                         ]
-//                     },
-//                     {
-//                         field_id: parseInt(process.env.AMOCRM_COMPANY_SALE_MONTH),
-//                         values: [
-//                             {
-//                                 value: req.body.salesMonth
-//
-//                             }
-//                         ]
-//                     },
-//                     {
-//                         field_id: parseInt(process.env.AMOCRM_COMPANY_SOLD_CARD),
-//                         values: [
-//                             {
-//                                 value: req.body.infoAboutSoldCard
-//
-//                             }
-//                         ]
-//                     },
-//                     {
-//                         field_id:  parseInt(process.env.AMOCRM_COMPANY_CAR_EXPERIENS),
-//                         values: [
-//                             {
-//                                 value: req.body.carExperience
-//
-//                             }
-//                         ]
-//                     },
-//                     {
-//                         field_id: parseInt(process.env.AMOCRM_COMPANY_SERVICE_TOTAL_AREA),
-//                         values: [
-//                             {
-//                                 value: req.body.serviceTotalArea
-//
-//                             }
-//                         ]
-//                     },
-//                     {
-//                         field_id:  parseInt(process.env.AMOCRM_COMPANY_SHOWROOM_AREA),
-//                         values: [
-//                             {
-//                                 value: req.body.showroomUsableArea
-//
-//                             }
-//                         ]
-//                     },
-//                     {
-//                         field_id: parseInt(process.env.AMOCRM_COMPANY_SHOWROOM_TOTAL_AREA),
-//                         values: [
-//                             {
-//                                 value: req.body.serviceTotalArea
-//
-//                             }
-//                         ]
-//                     },
-//                     {
-//                         field_id: parseInt(process.env.AMOCRM_COMPANY_SHOWROOM_COUNT_USER),
-//                         values: [
-//                             {
-//                                 value: req.body.countUser
-//
-//                             }
-//                         ]
-//                     },
-//                     {
-//                         field_id: parseInt(process.env.AMOCRM_COMPANY_SHOWROOM_ADDRESS),
-//                         values: [
-//                             {
-//                                 value: req.body.address
-//
-//                             }
-//                         ]
-//                     },
-//                     {
-//                         field_id: parseInt(process.env.AMOCRM_COMPANY_REGION),
-//                         values: [
-//                             {
-//                                 value: req.body.region
-//
-//                             }
-//                         ]
-//                     },
-//                     {
-//                         field_id: parseInt(process.env.AMOCRM_COMPANY_NAME_ENTERPRISES),
-//                         values: [
-//                             {
-//                                 value: req.body.nameEnterprises
-//
-//                             }
-//                         ]
-//                     },
-//                 ]
-//             }
-//         ]
-//
-//         const {accessToken} = await getToken()
-// await axios.post('api/v4/companies', data, {
-//             headers: {
-//                 Authorization: `Bearer ${accessToken}`
-//             }
-//         })
         res.status(201).send(dealers)
 
     } catch (error) {
@@ -244,7 +238,7 @@ router.post('/', async (req, res) => {
 
 //PUT
 
-router.put('/:id', [auth,validId], async (req, res) => {
+router.put('/:id', [auth, validId], async (req, res) => {
     const {error} = validate(req.body)
 
     if (error) {
@@ -265,7 +259,7 @@ router.put('/:id', [auth,validId], async (req, res) => {
 
 //DELETE
 
-router.delete('/:id', [auth,validId], async (req, res) => {
+router.delete('/:id', [auth, validId], async (req, res) => {
     const dealers = await Dealers.findByIdAndRemove(req.params.id)
 
     if (!dealers) {
