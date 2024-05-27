@@ -218,6 +218,15 @@ router.post('/', async (req, res) => {
                             }
                         ]
                     },
+                    {
+                        field_id: parseInt(process.env.AMOCRM_COMPANY_CONTACT_PHONE),
+                        values: [
+                            {
+                                value: req.body.contactPhone
+
+                            }
+                        ]
+                    },
                 ]
             }
         ]
